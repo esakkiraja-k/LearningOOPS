@@ -31,9 +31,21 @@ namespace PainterApp
 
         private static IPainter FindCheapestPainter(double sqMeters, IEnumerable<IPainter> painters)
         {
-            return painters.Where(i => i.IsAvailable)
-                .OrderBy(i => i.EstimateCompensation(sqMeters))
-                .FirstOrDefault();
+            //return painters.Where(i => i.IsAvailable)
+            //    .OrderBy(i => i.EstimateCompensation(sqMeters))
+            //    .FirstOrDefault();
+
+            //return painters.Where(i => i.IsAvailable)
+            //    .Aggregate((IPainter) null, (best, cur) =>
+            //        best == null ||
+            //        cur.EstimateCompensation(sqMeters) < best.EstimateCompensation(sqMeters)
+            //            ? cur
+            //            : best);
+
+
+            return painters
+                .Where(i => i.IsAvailable)
+                .WithMinimum(i => i.EstimateCompensation(sqMeters));
         }
 
 
