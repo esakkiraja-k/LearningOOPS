@@ -4,22 +4,29 @@ using System.Text;
 
 namespace Part1
 {
-    class Active : IFreezable
+    class Active : IAccountState
     {
-        public Active()
-        {
-
-        }
         public Action OnUnfreeze { get; set; }
         public Active(Action onUnfreeze)
         {
             this.OnUnfreeze = onUnfreeze;
         }
 
-        public IFreezable Deposit() => this;
+        public IAccountState Deposit(Action addToBalance)
+        {
+            addToBalance();
+            return this;
+        }
 
-        public IFreezable Freeze() => new Frozen(this.OnUnfreeze);
+        public IAccountState Withdraw(Action subtractFromBalance)
+        {
+            subtractFromBalance();
+            return this;
+        }
 
-        public IFreezable Withdraw() => this;
+        public IAccountState Freeze() => new Frozen(this.OnUnfreeze);
+        public IAccountState HolderVerified() => this;
+
+        public IAccountState Close() => this;
     }
 }
