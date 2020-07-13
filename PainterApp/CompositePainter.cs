@@ -10,7 +10,12 @@ namespace PainterApp
     {
         public IEnumerable<TPainter> Painters { get; }
 
-        private Func<double,IEnumerable<TPainter>,IPainter> Reduce { get; }
+        public Func<double,IEnumerable<TPainter>,IPainter> Reduce { get; set; }
+        public CompositePainter(IEnumerable<TPainter> painters)
+        {
+            this.Painters = painters.ToList();
+
+        }
         public CompositePainter(IEnumerable<TPainter> painters, Func<double, IEnumerable<TPainter>, IPainter> reduce)
         {
             this.Painters = painters.ToList();
