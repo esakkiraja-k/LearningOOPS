@@ -5,22 +5,33 @@ using System.Text;
 
 namespace PainterApp
 {
-    class CombiningPainter:CompositePainter<ProportionalPainter>
+    class CombiningPainter<TPainter>: CompositePainter<TPainter>
+    where TPainter:IPainter
     {
-        public CombiningPainter(IEnumerable<ProportionalPainter> painters):base(painters)
+        private  IPaintingScheduler<TPainter> ScheduleWork
+        {
+            get;
+        }
+
+        public CombiningPainter(IEnumerable<TPainter> painters,
+           IPaintingScheduler<TPainter> scheduler) :base(painters)
         {
             base.Reduce = this.Combine;
+            this.ScheduleWork = scheduler;
 
         }
 
-        private IPainter Combine(double sqMeters, IEnumerable<ProportionalPainter> painters)
+        private IPainter Combine(double sqMeters, IEnumerable<TPainter> painters)
         {
-            TimeSpan time = EstimateTime(sqMeters, painters);
+            IEnumerable<TPainter> availablePainters = painters.Where(i => i.IsAvailable);
 
-            double cost = painters.Where(i => i.IsAvailable)
-                .Select(i =>
-                    i.EstimateCompensation(sqMeters) / i.EstimateTimeToPaint(sqMeters).TotalHours * time.TotalHours)
-                .Sum();
+            IEnumerable<PaintingTask<TPainter>> schedule = 
+                this.ScheduleWork.Schedule(sqMeters, availablePainters);
+            
+            TimeSpan time = schedule.Max(t => t.Painter.EstimateTimeToPaint(t.SqMeters));
+
+
+            double cost = schedule.Sum(t => t.Painter.EstimateCompensation(t.SqMeters));
 
             return new ProportionalPainter()
             {
@@ -29,7 +40,6 @@ namespace PainterApp
             };
         }
 
-        public Func<double, IEnumerable<ProportionalPainter>,TimeSpan> EstimateTime { get; set; }
 
         //private  TimeSpan EstimateTime(double sqMeters, IEnumerable<ProportionalPainter> painters)
         //{

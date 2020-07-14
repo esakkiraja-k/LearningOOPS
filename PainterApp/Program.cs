@@ -66,7 +66,7 @@ namespace PainterApp
             IPainter fastest = CompositePainterFactories.CreateFastestSelector(painters);
             Console.WriteLine("Fastest painter!" + fastest.EstimateTimeToPaint(10));
 
-            IPainter painter = CompositePainterFactories.CreateGroup(painters);
+            IPainter painter = CompositePainterFactories.CombineProportional(painters);
             Console.WriteLine(
                 $"if they work together they complete in {painter.EstimateTimeToPaint(10)} and cost {painter.EstimateCompensation(10)}");
 
