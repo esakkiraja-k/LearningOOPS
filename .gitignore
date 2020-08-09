@@ -7,3 +7,5 @@
 /.vs/OODesign
 /PainterApp/obj
 /PainterApp/bin/Debug/netcoreapp3.1
+/ImmutableObjects/obj
+/ImmutableObjects/bin/Debug/netcoreapp3.1
